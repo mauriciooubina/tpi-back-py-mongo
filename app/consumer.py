@@ -9,18 +9,10 @@ def normalize_type(t: str) -> str:
         return ""
     key = t.strip().lower()
     aliases = {
-        "user_upsert": "USER_UPSERT",
-        "user.created": "USER_UPSERT",
-        "user.updated": "USER_UPSERT",
-        "user.add": "USER_UPSERT",
-        "user_deleted": "USER_DELETED",
-        "user.remove": "USER_DELETED",
-        "product_upsert": "PRODUCT_UPSERT",
-        "product.created": "PRODUCT_UPSERT",
-        "product.updated": "PRODUCT_UPSERT",
-        "product.add": "PRODUCT_UPSERT",
-        "product_deleted": "PRODUCT_DELETED",
-        "product.remove": "PRODUCT_DELETED",
+        "user_add": "USER_UPSERT",
+        "user_remove": "USER_DELETED",
+        "product_add": "PRODUCT_UPSERT",
+        "product_remove": "PRODUCT_DELETED",
     }
     return aliases.get(key, t.upper())
 
