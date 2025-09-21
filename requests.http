@@ -1,0 +1,204 @@
+@base = http://localhost:8000
+@now = 2025-09-21T22:00:00Z
+@uid1 = u-201
+@uid2 = u-202
+@pid1 = p-301
+@pid2 = p-302
+
+### Health
+GET {{base}}/health
+
+### (Opcional) Lista inicial users
+GET {{base}}/users
+
+### (Opcional) Lista inicial products
+GET {{base}}/products
+
+
+########################################################
+# 1) ALTAS — 2 usuarios + 2 productos
+########################################################
+
+### Alta Usuario 1
+POST {{base}}/_simulate/event
+Content-Type: application/json
+
+{
+  "event_id": "{{$guid}}",
+  "type": "user.add",
+  "occurred_at": "{{now}}",
+  "source": "legacy",
+  "data": {
+    "user_id": "{{uid1}}",
+    "email": "{{uid1}}@poc.com",
+    "name": "Usuario 201",
+    "status": "ACTIVE"
+  }
+}
+
+### Ver Usuario 1
+GET {{base}}/users/{{uid1}}
+
+### Alta Usuario 2
+POST {{base}}/_simulate/event
+Content-Type: application/json
+
+{
+  "event_id": "{{$guid}}",
+  "type": "user.add",
+  "occurred_at": "2025-09-21T22:02:00Z",
+  "source": "legacy",
+  "data": {
+    "user_id": "{{uid2}}",
+    "email": "{{uid2}}@poc.com",
+    "name": "Usuario 202",
+    "status": "ACTIVE"
+  }
+}
+
+### Ver Usuario 2
+GET {{base}}/users/{{uid2}}
+
+### Alta Producto 1
+POST {{base}}/_simulate/event
+Content-Type: application/json
+
+{
+  "event_id": "{{$guid}}",
+  "type": "product.add",
+  "occurred_at": "2025-09-21T22:04:00Z",
+  "source": "legacy",
+  "data": {
+    "product_id": "{{pid1}}",
+    "sku": "SKU-301",
+    "name": "Producto 301",
+    "price": 199.99,
+    "currency": "ARS",
+    "status": "ACTIVE"
+  }
+}
+
+### Ver Producto 1
+GET {{base}}/products/{{pid1}}
+
+### Alta Producto 2
+POST {{base}}/_simulate/event
+Content-Type: application/json
+
+{
+  "event_id": "{{$guid}}",
+  "type": "product.add",
+  "occurred_at": "2025-09-21T22:06:00Z",
+  "source": "legacy",
+  "data": {
+    "product_id": "{{pid2}}",
+    "sku": "SKU-302",
+    "name": "Producto 302",
+    "price": 349.50,
+    "currency": "ARS",
+    "status": "ACTIVE"
+  }
+}
+
+### Ver Producto 2
+GET {{base}}/products/{{pid2}}
+
+### Listas después de las altas
+GET {{base}}/users
+
+### Listas después de las altas
+GET {{base}}/products
+
+
+########################################################
+# 2) UPDATES — 1 usuario + 1 producto
+########################################################
+
+### Update Usuario 1 (cambia name y email)
+POST {{base}}/_simulate/event
+Content-Type: application/json
+
+{
+  "event_id": "{{$guid}}",
+  "type": "user.updated",
+  "occurred_at": "2025-09-21T22:10:00Z",
+  "source": "legacy",
+  "data": {
+    "user_id": "{{uid1}}",
+    "email": "{{uid1}}.upd@poc.com",
+    "name": "Usuario 201 (upd)",
+    "status": "ACTIVE"
+  }
+}
+
+### Ver Usuario 1 actualizado
+GET {{base}}/users/{{uid1}}
+
+### Update Producto 1 (cambia precio y nombre)
+POST {{base}}/_simulate/event
+Content-Type: application/json
+
+{
+  "event_id": "{{$guid}}",
+  "type": "product.updated",
+  "occurred_at": "2025-09-21T22:12:00Z",
+  "source": "legacy",
+  "data": {
+    "product_id": "{{pid1}}",
+    "sku": "SKU-301",
+    "name": "Producto 301 (upd)",
+    "price": 219.99,
+    "currency": "ARS",
+    "status": "ACTIVE"
+  }
+}
+
+### Ver Producto 1 actualizado
+GET {{base}}/products/{{pid1}}
+
+### Listas después de los updates
+GET {{base}}/users
+
+### Listas después de los updates
+GET {{base}}/products
+
+
+########################################################
+# 3) DELETES — 1 usuario + 1 producto (soft delete)
+########################################################
+
+### Delete Usuario 2
+POST {{base}}/_simulate/event
+Content-Type: application/json
+
+{
+  "event_id": "{{$guid}}",
+  "type": "user.remove",
+  "occurred_at": "2025-09-21T22:15:00Z",
+  "source": "legacy",
+  "data": { "user_id": "{{uid2}}" }
+}
+
+### Delete Producto 2
+POST {{base}}/_simulate/event
+Content-Type: application/json
+
+{
+  "event_id": "{{$guid}}",
+  "type": "product.remove",
+  "occurred_at": "2025-09-21T22:17:00Z",
+  "source": "legacy",
+  "data": { "product_id": "{{pid2}}" }
+}
+
+### Listas finales (no deben mostrar eliminados)
+GET {{base}}/users
+
+### Listas finales (no deben mostrar eliminados)
+GET {{base}}/products
+
+### Ver los eliminados por ID (deberían tener is_deleted=true)
+GET {{base}}/users/{{uid2}}
+
+### Ver los eliminados por ID (deberían tener is_deleted=true)
+GET {{base}}/products/{{pid2}}
