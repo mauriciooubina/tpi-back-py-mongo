@@ -13,22 +13,14 @@ services:
   backend:
     build: .
     environment:
-      # Modo simulación (NO consume SQS)
-      BROKER_MODE: "none"
-
-      # Cuando conectes AWS real, cambiá a:
-      # BROKER_MODE: "sqs"
-      # Opción A: una sola cola
-      # SQS_QUEUE_URL: "https://sqs.<region>.amazonaws.com/<account>/addproductnew"
-      # Opción B: múltiples colas (separadas por coma)
-      # SQS_QUEUE_URLS: "https://sqs.<region>.amazonaws.com/<account>/addproductnew,https://sqs.<region>.amazonaws.com/<account>/removeproductnew,https://sqs.<region>.amazonaws.com/<account>/addusernew,https://sqs.<region>.amazonaws.com/<account>/removeusernew"
-      # AWS_REGION: "us-east-1"
-      # AWS_ACCESS_KEY_ID: "<tu_key>"
-      # AWS_SECRET_ACCESS_KEY: "<tu_secret>"
-
-      # Mongo
-      MONGO_URL: "mongodb://mongo:27017"
-      MONGO_DB: "retail_poc"
+      BROKER_MODE: ${BROKER_MODE:-none}
+      SQS_QUEUE_URLS: ${SQS_QUEUE_URLS:-}
+      SQS_QUEUE_URL: ${SQS_QUEUE_URL:-}
+      AWS_REGION: ${AWS_REGION:-us-east-1}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-}
+      MONGO_URL: ${MONGO_URL:-mongodb://mongo:27017}
+      MONGO_DB: ${MONGO_DB:-retail_poc}
     depends_on:
       mongo:
         condition: service_healthy
